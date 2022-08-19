@@ -11,6 +11,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { GoogleLogin, googleLogout } from '@react-oauth/google'
 import jwt_decode from 'jwt-decode'
 import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 
 import Input from './Input'
 import useStyles from './styles'
@@ -21,15 +22,15 @@ const Auth = () => {
   const [isSignup, setIsSignup] = useState(false)
 
   const dispatch = useDispatch()
+  const history = useHistory()
 
   const createOrGetUser = async (response) => {
-    const decoded = jwt_decode(response.credential)
-    console.log(decoded)
-    const token = decoded.sub
-    console.log(token)
+    const profile = jwt_decode(response.credential)
 
     try {
-      dispatch({ type: 'AUTH', data: { decoded } })
+      dispatch({ type: 'AUTH', data: { profile } })
+
+      history.push('/')
     } catch (error) {
       console.log(error)
     }

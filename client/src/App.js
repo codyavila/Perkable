@@ -1,6 +1,7 @@
 import React from 'react'
 import { Container, createTheme, ThemeProvider } from '@material-ui/core'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 import Navbar from './components/NavBar/Navbar'
 import Home from './components/Home/Home'
@@ -28,17 +29,20 @@ const App = () => {
   })
 
   return (
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <Container maxWidth='lg'>
-          <Navbar />
-          <Switch>
-            <Route path='/' exact component={Home} />
-            <Route path='/auth' exact component={Auth} />
-          </Switch>
-        </Container>
-      </ThemeProvider>
-    </BrowserRouter>
+    <GoogleOAuthProvider
+      clientId={`${process.env.REACT_APP_GOOGLE_CLIENT_ID}`}>
+      <BrowserRouter>
+        <ThemeProvider theme={theme}>
+          <Container maxWidth='lg'>
+            <Navbar />
+            <Switch>
+              <Route path='/' exact component={Home} />
+              <Route path='/auth' exact component={Auth} />
+            </Switch>
+          </Container>
+        </ThemeProvider>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   )
 }
 

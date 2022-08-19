@@ -8,6 +8,9 @@ import {
   Container
 } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { GoogleLogin, googleLogout } from '@react-oauth/google'
+import jwt_decode from 'jwt-decode'
+import { useDispatch } from 'react-redux'
 
 import Input from './Input'
 import useStyles from './styles'
@@ -16,6 +19,21 @@ const Auth = () => {
   const classes = useStyles()
   const [showPassword, setShowPassword] = useState(false)
   const [isSignup, setIsSignup] = useState(false)
+
+  const dispatch = useDispatch()
+
+  const createOrGetUser = async (response) => {
+    const decoded = jwt_decode(response.credential)
+    console.log(decoded)
+    const token = decoded.sub
+    console.log(token)
+
+    try {
+      dispatch({ type: 'AUTH', data: { decoded } })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const handleShowPassword = () =>
     setShowPassword((prevShowPassword) => !prevShowPassword)
@@ -84,6 +102,16 @@ const Auth = () => {
             className={classes.submit}>
             {isSignup ? 'Sign Up' : 'Sign In'}
           </Button>
+          <GoogleLogin
+            onSuccess={(res) => {
+              createOrGetUser(res)
+              console.log(res)
+            }}
+            onError={() => {
+              console.log('Login Failed')
+            }}
+            cookiePolicy='single_host_origin'
+          />
           <Grid container justifyContent='flex-end'>
             <Grid item>
               <Button onClick={switchMode}>

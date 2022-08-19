@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Container, createTheme, ThemeProvider } from '@material-ui/core'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 

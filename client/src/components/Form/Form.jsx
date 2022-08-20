@@ -8,7 +8,6 @@ import { createPost, updatePost } from '../../actions/posts'
 
 const Form = ({ currentId, setCurrentId }) => {
   const [postData, setPostData] = useState({
-    creator: '',
     title: '',
     message: '',
     tags: '',
@@ -17,6 +16,9 @@ const Form = ({ currentId, setCurrentId }) => {
   const post = useSelector((state) =>
     currentId ? state.posts.find((p) => p._id === currentId) : null
   )
+
+  const user = JSON.parse(localStorage.getItem('profile'))
+
   const dispatch = useDispatch()
   const classes = useStyles()
 
@@ -27,18 +29,30 @@ const Form = ({ currentId, setCurrentId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (currentId) {
-      dispatch(updatePost(currentId, postData))
+    if (currentId === 0) {
+      dispatch(createPost({ ...postData, name: user?.profile?.name }))
+      clear()
     } else {
-      dispatch(createPost(postData))
+      dispatch(
+        updatePost(currentId, { ...postData, name: user?.profile?.name })
+      )
+      clear()
     }
-    clear()
+  }
+
+  if (!user?.profile?.name) {
+    return (
+      <Paper className={classes.paper}>
+        <Typography variant='h6' align='center'>
+          Sign in to start logging and reviewing games!
+        </Typography>
+      </Paper>
+    )
   }
 
   const clear = () => {
     setCurrentId(null)
     setPostData({
-      creator: '',
       title: '',
       message: '',
       tags: '',
@@ -56,16 +70,6 @@ const Form = ({ currentId, setCurrentId }) => {
         <Typography variant='h6'>
           {currentId ? 'Editing' : 'Creating'} a Game Review
         </Typography>
-        <TextField
-          name='creator'
-          variant='outlined'
-          label='Creator'
-          fullWidth
-          value={postData.creator}
-          onChange={(e) =>
-            setPostData({ ...postData, creator: e.target.value })
-          }
-        />
         <TextField
           name='title'
           variant='outlined'

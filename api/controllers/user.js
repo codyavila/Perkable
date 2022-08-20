@@ -56,5 +56,7 @@ export const signup = async (req, res) => {
     })
 
     res.status(200).json({ profile, token })
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 }

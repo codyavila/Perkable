@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import { AppBar, Avatar, Toolbar, Typography, Button } from '@material-ui/core'
 import { useDispatch } from 'react-redux'
+import jwt_decode from 'jwt-decode'
 
 import useStyles from './styles'
 
@@ -15,17 +16,22 @@ const Navbar = () => {
   const logout = () => {
     dispatch({ type: 'LOGOUT' })
 
-    history.push()
+    history.push('/')
 
     setUser(null)
   }
 
   useEffect(() => {
-    // const token = user?.profile.sub
+    const token = user?.token
+
+    if (token) {
+      const decoded = jwt_decode(token)
+
+      if (decoded.exp * 1000 < new Date().getTime()) logout()
+    }
 
     return () => {
       setUser(JSON.parse(localStorage.getItem('profile')))
-
     }
   }, [location])
 
@@ -50,7 +56,7 @@ const Navbar = () => {
               className={classes.purple}
               variant='rounded'
               alt={user?.profile.name}
-              src={user?.profile.picture}
+              src={user?.profile.image}
               referrerPolicy='no-referrer'
             />
             <Typography className={classes.userName} variant='h6'>

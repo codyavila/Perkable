@@ -30,15 +30,29 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [isSignup, setIsSignup] = useState(false)
   const [formData, setFormData] = useState(initialState)
+  
 
   const dispatch = useDispatch()
   const history = useHistory()
 
   const createOrGetUser = async (response) => {
-    const profile = jwt_decode(response.credential)
+    const decoded = jwt_decode(response.credential)
+    console.log(decoded)
+    const { name, picture, sub, jti } = decoded
+
+    
+    const profile = {
+      _id: sub,
+      name: name,
+      image: picture,
+    }
+
+    const token = jti
+
+    console.log(profile)
 
     try {
-      dispatch({ type: 'AUTH', data: { profile } })
+      dispatch({ type: 'AUTH', data: { profile, token } })
 
       history.push('/')
     } catch (error) {
@@ -127,7 +141,6 @@ const Auth = () => {
           <GoogleLogin
             onSuccess={(res) => {
               createOrGetUser(res)
-              console.log(res)
             }}
             onError={() => {
               console.log('Login Failed')

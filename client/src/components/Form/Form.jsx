@@ -7,6 +7,9 @@ import useStyles from './styles'
 import { createPost, updatePost } from '../../actions/posts'
 
 const Form = ({ currentId, setCurrentId }) => {
+  const dispatch = useDispatch()
+  const classes = useStyles()
+
   const [postData, setPostData] = useState({
     title: '',
     message: '',
@@ -14,13 +17,12 @@ const Form = ({ currentId, setCurrentId }) => {
     selectedFile: ''
   })
   const post = useSelector((state) =>
-    currentId ? state.posts.find((p) => p._id === currentId) : null
+    currentId ? state.posts.find((message) => message._id === currentId) : null
   )
 
   const user = JSON.parse(localStorage.getItem('profile'))
 
-  const dispatch = useDispatch()
-  const classes = useStyles()
+  console.log(user)
 
   useEffect(() => {
     if (post) setPostData(post)
@@ -29,14 +31,14 @@ const Form = ({ currentId, setCurrentId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (currentId === 0) {
+    if (currentId === null) {
       dispatch(createPost({ ...postData, name: user?.profile?.name }))
       clear()
     } else {
       dispatch(
         updatePost(currentId, { ...postData, name: user?.profile?.name })
-      )
-      clear()
+        )
+        clear()
     }
   }
 

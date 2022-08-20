@@ -1,9 +1,7 @@
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
-
 import User from '../models/user.js'
 
-
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 export const signin = async (req, res) => {
   const { email, password } = req.body
@@ -28,7 +26,7 @@ export const signin = async (req, res) => {
       { expiresIn: '1h' }
     )
 
-    res.status(200).json({ result: existingUser, token })
+    res.status(200).json({ profile: existingUser, token })
   } catch (error) {
     res.status(500).json({ message: 'Internal Server Error.' })
   }
@@ -47,16 +45,16 @@ export const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    const result = await User.create({
+    const profile = await User.create({
       email,
       password: hashedPassword,
       name: `${firstName} ${lastName}`
     })
 
-    const token = jwt.sign({ email: result.email, id: result._id }, 'test', {
+    const token = jwt.sign({ email: profile.email, id: profile._id }, 'test', {
       expiresIn: '1h'
     })
 
-    res.status(200).json({ result, token })
+    res.status(200).json({ profile, token })
   } catch (error) {}
 }

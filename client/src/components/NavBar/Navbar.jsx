@@ -21,7 +21,7 @@ const Navbar = () => {
   }
 
   useEffect(() => {
-    const token = user?.profile.sub
+    // const token = user?.profile.sub
 
     return () => {
       setUser(JSON.parse(localStorage.getItem('profile')))
